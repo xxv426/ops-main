@@ -5,9 +5,10 @@ Docker Compose: one Caddy in front of everything, one network per app, restic
 backups that each app declares for itself, and email alerts.
 
 This repository holds no server or app of its own. Each server gets its own
-**instance repository** made from it, which adds an `ops.conf` and the server's
-apps under `apps/`. Platform improvements are made here and merged into every
-instance.
+**instance repository** made from it, which adds only `ops.conf`, the server's
+apps under `apps/`, and an `INSTANCE.md` with notes about that server. Platform
+improvements are made here and merged into every instance; an instance never
+edits the starter's files, so those merges do not conflict.
 
 ```text
 ops-starter ──► ops-main     (server A: apps 1, 2, 3)
@@ -43,7 +44,7 @@ git clone <ops-starter url> ops-<server>
 cd ops-<server>
 git remote rename origin upstream        # keep the starter's history for later merges
 git remote add origin <new private repository url>
-cp ops.conf.example ops.conf             # fill it in
+cp ops.conf.example ops.conf             # fill it in; notes about the server go in INSTANCE.md
 cp -r examples/vaultwarden apps/vaultwarden   # or: platform/bin/ops new <app>
 # edit the app's files, then:
 git add -A && git commit -m "Initialize ops-<server>" && git push -u origin main
