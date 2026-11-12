@@ -20,6 +20,17 @@ cmd_init() {
   install -d -m 755 "$OPS_STATE" "$OPS_LOG_DIR"
   install -d -m 700 "$OPS_STAGE_ROOT" "$OPS_DATA_ROOT"
 
+  if ! apps_need_backups; then
+    log "no app backs up (every BACKUP_TARGETS is none); skipping restic setup"
+    if [[ ! -f $OPS_ETC/alert.env ]]; then
+      install -m 600 "$OPS_ROOT/platform/templates/alert.env.example" "$OPS_ETC/alert.env"
+      die "created $OPS_ETC/alert.env from the template. Fill it in, then run ops init again"
+    fi
+    cmd_alert_test || die "fix alert.env, then run ops init again"
+    log "init finished. Next: ops up <app> for each app"
+    return
+  fi
+
   if [[ ! -s $OPS_ETC/restic-password ]]; then
     if ((generate)); then
       (umask 077 && openssl rand -hex 32 >"$OPS_ETC/restic-password")
@@ -56,6 +67,15 @@ cmd_init() {
 
   cmd_alert_test || die "fix alert.env, then run ops init again"
   log "init finished. Next: ops up <app> for each app, then ops install-cron"
+}
+
+apps_need_backups() {
+  local app
+  for app in $(list_apps); do
+    load_app_conf "$app"
+    [[ $BACKUP_TARGETS == none ]] || return 0
+  done
+  return 1
 }
 
 cmd_install_cron() {

@@ -21,6 +21,7 @@ check_app_backup_targets() {
   load_app_conf "$app"
   [[ -n $BACKUP_TARGETS ]] || die "$app: set BACKUP_TARGETS in app.conf (target names, or none)"
   [[ $BACKUP_TARGETS == none ]] && return 0
+  [[ -f $OPS_ETC/backup.env ]] || die "$app backs up to '$BACKUP_TARGETS', but $OPS_ETC/backup.env does not exist yet (run ops init)"
   load_backup_env
   for target in $BACKUP_TARGETS; do
     target_defined "$target" || die "$app: backup target '$target' is not defined in $OPS_ETC/backup.env"
