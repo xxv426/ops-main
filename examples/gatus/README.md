@@ -1,5 +1,7 @@
 # Gatus
 
+[中文](README.zh-CN.md)
+
 Checks sites from outside and receives every server's nightly backup heartbeat.
 Run it on a different server from the apps it watches: a dead server cannot
 report itself.

@@ -1,5 +1,7 @@
 # Writing an app
 
+[中文](apps.zh-CN.md)
+
 An app is a directory under `apps/` in the instance repository. ops reads only
 what is listed here.
 
@@ -89,3 +91,5 @@ missing (or with `--restore-env`), so hooks never handle it.
   (`compose up -d db`), put the data back, and leave starting the app to ops.
 - **verify-hook.sh**: inspect the restored copy without touching the running
   app, for example `PRAGMA integrity_check` or `gunzip -t`.
+
+Each command's step-by-step flow is in [commands/README.md](commands/README.md).

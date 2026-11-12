@@ -1,5 +1,7 @@
 # Static site
 
+[中文](README.zh-CN.md)
+
 A site built by its own repository's CI and served by the edge Caddy from
 `/srv/www/<site>/current`. Nothing runs in a container and nothing is backed up:
 the site can be rebuilt from Git.

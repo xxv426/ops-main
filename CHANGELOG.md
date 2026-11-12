@@ -1,11 +1,15 @@
 # Changelog
 
+[中文](CHANGELOG.zh-CN.md)
+
 Upgrade an instance with `git fetch upstream && git merge upstream/main`, then
 sync and run `ops upgrade` on the server. Steps beyond that are listed under
 each version.
 
 ## Unreleased
 
+- Docs: one page per command in `docs/commands/` with its step-by-step flow and
+  everyday forms, and a Chinese version (`*.zh-CN.md`) of every document.
 - `ops.conf`: `OPS_ARCH` is gone; the architecture is detected on the server.
   Remove the line from your `ops.conf` (`ops lint` reminds you). Only `OPS_HOST`
   and the resource budget are required.
