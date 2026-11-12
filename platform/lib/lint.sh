@@ -74,6 +74,9 @@ cmd_lint() {
   local app apps
   mapfile -t apps < <(list_apps)
   echo "linting ${#apps[@]} app(s) in $OPS_APPS_DIR"
+  if grep -q '^OPS_ARCH=' "$OPS_CONF"; then
+    warn "OPS_ARCH in ops.conf is no longer used (the architecture is detected); remove it"
+  fi
   for app in "${apps[@]}"; do
     lint_app "$app"
   done

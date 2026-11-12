@@ -95,7 +95,7 @@ check_app_arch() {
 cmd_status() {
   load_ops_conf
   local app status
-  echo "host: $OPS_HOST ($OPS_ARCH)  platform: $(cat "$OPS_ROOT/VERSION")"
+  echo "host: $OPS_HOST ($OPS_ARCH)  platform: $(cat "$OPS_ROOT/VERSION")  revision: $(cat "$OPS_ROOT/.revision" 2>/dev/null || echo unknown)"
   echo
   printf '%-16s %-10s %-40s %s\n' APP CONTAINERS "LAST BACKUP" TARGETS
   for app in $(list_apps); do

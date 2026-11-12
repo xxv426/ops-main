@@ -5,17 +5,16 @@
 # the machine is replaced, so backup history continues.
 OPS_HOST=main
 
-# CPU architecture of the server: amd64 or arm64.
-OPS_ARCH=arm64
-
 # The resource limits of all services together (edge included) may not exceed
 # these. Set them to what you want to stay within, not just the machine size.
 RESOURCE_BUDGET_CPUS=2
 RESOURCE_BUDGET_MEM=12g
 
+# Optional from here on; the defaults are shown.
+
 # cron schedules in the server's time zone (usually UTC).
-BACKUP_TIME="30 19 * * *"
-CHECK_TIME="0 21 * * 0"
+#BACKUP_TIME="30 19 * * *"
+#CHECK_TIME="0 21 * * 0"
 
 # User that CI logs in as to publish static sites to /srv/www. Empty: none.
-DEPLOY_USER=
+#DEPLOY_USER=

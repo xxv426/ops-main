@@ -25,12 +25,22 @@ require_root() {
   [[ $EUID -eq 0 ]] || die "run as root"
 }
 
+# This machine's CPU architecture, named the way Docker and restic name it.
+machine_arch() {
+  case $(uname -m) in
+    x86_64) echo amd64 ;;
+    aarch64 | arm64) echo arm64 ;;
+    *) uname -m ;;
+  esac
+}
+
 load_ops_conf() {
   [[ -f $OPS_CONF ]] || die "missing $OPS_CONF (copy ops.conf.example and fill it in)"
   # shellcheck disable=SC1090
   source "$OPS_CONF"
   : "${OPS_HOST:?OPS_HOST is not set in ops.conf}"
-  : "${OPS_ARCH:?OPS_ARCH is not set in ops.conf}"
+  # Detected, not configured: everything that uses it runs on the server.
+  OPS_ARCH=$(machine_arch)
   : "${RESOURCE_BUDGET_CPUS:?RESOURCE_BUDGET_CPUS is not set in ops.conf}"
   : "${RESOURCE_BUDGET_MEM:?RESOURCE_BUDGET_MEM is not set in ops.conf}"
   BACKUP_TIME=${BACKUP_TIME:-"30 19 * * *"}

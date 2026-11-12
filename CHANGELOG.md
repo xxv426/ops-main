@@ -6,6 +6,13 @@ each version.
 
 ## Unreleased
 
+- `ops.conf`: `OPS_ARCH` is gone; the architecture is detected on the server.
+  Remove the line from your `ops.conf` (`ops lint` reminds you). Only `OPS_HOST`
+  and the resource budget are required.
+- `scripts/sync.sh` checks on the server, before changing anything, that
+  `/opt/ops` belongs to the same `OPS_HOST` and that `ops lint` passes on the new
+  files. `--force` and `--no-lint` skip the checks. It records the synced commit
+  in `/opt/ops/.revision`, shown by `ops status`.
 - Alerts: send SMTP credentials with `--sasl-ir`; QQ Mail rejected curl's
   default two-step AUTH PLAIN.
 
