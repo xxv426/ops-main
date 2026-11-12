@@ -41,14 +41,11 @@ cmd_init() {
   fi
   chmod 600 "$OPS_ETC/restic-password"
 
-  local file
-  for file in backup.env alert.env; do
-    if [[ ! -f $OPS_ETC/$file ]]; then
-      install -m 600 "$OPS_ROOT/platform/templates/$file.example" "$OPS_ETC/$file"
-      die "created $OPS_ETC/$file from the template. Fill it in, then run ops init again"
-    fi
-    chmod 600 "$OPS_ETC/$file"
-  done
+  if [[ ! -f $OPS_ETC/backup.env ]]; then
+    install -m 600 "$OPS_ROOT/platform/templates/backup.env.example" "$OPS_ETC/backup.env"
+    die "created $OPS_ETC/backup.env from the template. Fill it in, then run ops init again"
+  fi
+  chmod 600 "$OPS_ETC/backup.env"
 
   load_backup_env
   local targets
@@ -65,6 +62,11 @@ cmd_init() {
     fi
   done
 
+  if [[ ! -f $OPS_ETC/alert.env ]]; then
+    install -m 600 "$OPS_ROOT/platform/templates/alert.env.example" "$OPS_ETC/alert.env"
+    die "backups are ready. Created $OPS_ETC/alert.env from the template; fill it in, then run ops init again"
+  fi
+  chmod 600 "$OPS_ETC/alert.env"
   cmd_alert_test || die "fix alert.env, then run ops init again"
   log "init finished. Next: ops up <app> for each app, then ops install-cron"
 }
