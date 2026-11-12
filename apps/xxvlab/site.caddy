@@ -1,0 +1,21 @@
+xxvlab.com {
+	import security_headers
+	# /srv/www/xxvlab/current; Astro's hashed assets under /_astro/ are cached forever.
+	import static_site xxvlab /_astro/
+}
+
+www.xxvlab.com {
+	redir https://xxvlab.com{uri} permanent
+}
+
+stats.xxvlab.com {
+	import security_headers
+	encode zstd gzip
+	reverse_proxy umami:3000
+}
+
+talk.xxvlab.com {
+	import security_headers
+	encode zstd gzip
+	reverse_proxy waline:8360
+}

@@ -1,0 +1,72 @@
+# The services behind xxvlab.com. The site itself is static: GitHub Actions in
+# the xxvlab repository publishes it to /srv/www/xxvlab, and the edge serves it.
+name: xxvlab
+
+services:
+  umami:
+    image: ghcr.io/umami-software/umami:3.4.1
+    restart: unless-stopped
+    init: true
+    environment:
+      DATABASE_URL: postgresql://umami:${UMAMI_DB_PASSWORD}@umami-db:5432/umami
+      APP_SECRET: ${UMAMI_APP_SECRET}
+    depends_on:
+      umami-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/heartbeat"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+    networks: [app, internal]
+    cpus: 0.25
+    mem_limit: 768m
+
+  umami-db:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: umami
+      POSTGRES_USER: umami
+      POSTGRES_PASSWORD: ${UMAMI_DB_PASSWORD}
+    volumes:
+      # Keeps the volume name the server already has (xxvlab_umami-db-data).
+      - umami-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U umami -d umami"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [internal]
+    cpus: 0.25
+    mem_limit: 512m
+
+  # Comments. Off until enabled: `ops up` does not start profiled services; see README.
+  waline:
+    image: lizheming/waline:1.43.5
+    profiles: ["comments"]
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+      SQLITE_PATH: /app/data
+      JWT_TOKEN: ${WALINE_JWT_TOKEN}
+      SITE_NAME: xxvlab
+      SITE_URL: https://xxvlab.com
+      SECURE_DOMAINS: xxvlab.com,talk.xxvlab.com
+      COMMENT_AUDIT: "true"
+      IPQPS: "60"
+    volumes:
+      - /srv/apps/xxvlab/waline:/app/data
+    networks: [app]
+    cpus: 0.25
+    mem_limit: 256m
+
+networks:
+  app:
+    name: app-xxvlab
+    external: true
+  internal:
+    internal: true
+
+volumes:
+  umami-db-data:
