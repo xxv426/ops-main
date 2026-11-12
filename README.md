@@ -1,5 +1,7 @@
 # ops-starter
 
+[中文](README.zh-CN.md)
+
 A small, generic toolkit for running a few self-hosted apps on one server with
 Docker Compose: one Caddy in front of everything, one network per app, restic
 backups that each app declares for itself, and email alerts.
@@ -84,4 +86,5 @@ Run `ops` without arguments for every command.
 
 - [docs/architecture.md](docs/architecture.md): how it fits together and why
 - [docs/apps.md](docs/apps.md): writing an app directory
+- [docs/commands/](docs/commands/README.md): what each `ops` command does, step by step, and its everyday forms
 - [examples/](examples): static site, Vaultwarden (SQLite), Umami (Postgres), Gatus (monitoring)

@@ -1,5 +1,7 @@
 # Architecture
 
+[中文](architecture.zh-CN.md)
+
 ## Starter and instances
 
 | | What it holds | Changes when |

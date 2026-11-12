@@ -1,5 +1,7 @@
 # Umami
 
+[中文](README.zh-CN.md)
+
 Privacy-friendly web analytics with its own Postgres.
 
 - First login is `admin` / `umami`. Change the password at once.
