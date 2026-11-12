@@ -23,9 +23,11 @@ send_alert() {
     host=${SMTP_URL#*://}
     host=${host%%[:/]*}
     # The password goes through a netrc on a pipe, never on the command line.
+    # --sasl-ir sends the credentials with AUTH PLAIN in one step; some
+    # servers (QQ Mail) reject curl's default two-step AUTH PLAIN.
     printf 'From: %s\r\nTo: %s\r\nSubject: [ops %s] %s\r\nDate: %s\r\nContent-Type: text/plain; charset=utf-8\r\n\r\n%s\r\n' \
       "$ALERT_FROM" "$ALERT_TO" "${OPS_HOST:-?}" "$subject" "$(date -R)" "$body" |
-      curl -sS -m 60 --ssl-reqd --url "$SMTP_URL" \
+      curl -sS -m 60 --ssl-reqd --sasl-ir --url "$SMTP_URL" \
         --netrc-file <(printf 'machine %s login %s password %s\n' "$host" "${SMTP_USER:-}" "${SMTP_PASSWORD:-}") \
         --mail-from "$ALERT_FROM" --mail-rcpt "$ALERT_TO" --upload-file -
   ) || {
