@@ -1,5 +1,7 @@
 # xxvlab
 
+[中文](README.zh-CN.md)
+
 The services behind https://xxvlab.com.
 
 | Domain | What | Where |

@@ -1,5 +1,7 @@
 # Vaultwarden
 
+[中文](README.zh-CN.md)
+
 A Bitwarden-compatible password manager backed by SQLite.
 
 - The admin panel is not public: `ssh -L 8081:127.0.0.1:8081 <server>`, then

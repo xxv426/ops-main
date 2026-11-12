@@ -1,8 +1,11 @@
 # ops-main (instance notes)
 
+[中文](INSTANCE.zh-CN.md)
+
 The ops instance for the main server: Oracle Cloud A1 (4 OCPU / 24 GB, ARM,
 Ubuntu), Tokyo. Made from [ops-starter](https://github.com/xxv426/ops-starter);
-see its README and docs for how everything works.
+see its README and docs for how everything works. Every command's flow and
+everyday forms are in [docs/commands](docs/commands/README.md).
 
 | App | Domains | Backups |
 |---|---|---|
