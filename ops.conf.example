@@ -1,0 +1,21 @@
+# ops.conf: this server's settings. Committed to the instance repository, so
+# never put secrets here; those live in /etc/ops on the server.
+
+# Logical host name. Used as restic's --host and in alert subjects. Keep it when
+# the machine is replaced, so backup history continues.
+OPS_HOST=main
+
+# CPU architecture of the server: amd64 or arm64.
+OPS_ARCH=arm64
+
+# The resource limits of all services together (edge included) may not exceed
+# these. Set them to what you want to stay within, not just the machine size.
+RESOURCE_BUDGET_CPUS=2
+RESOURCE_BUDGET_MEM=12g
+
+# cron schedules in the server's time zone (usually UTC).
+BACKUP_TIME="30 19 * * *"
+CHECK_TIME="0 21 * * 0"
+
+# User that CI logs in as to publish static sites to /srv/www. Empty: none.
+DEPLOY_USER=

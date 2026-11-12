@@ -1,0 +1,50 @@
+name: umami
+
+services:
+  umami:
+    image: ghcr.io/umami-software/umami:3.4.1
+    restart: unless-stopped
+    init: true
+    environment:
+      DATABASE_URL: postgresql://umami:${UMAMI_DB_PASSWORD}@umami-db:5432/umami
+      APP_SECRET: ${UMAMI_APP_SECRET}
+    depends_on:
+      umami-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/heartbeat"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+    networks: [app, internal]
+    cpus: 0.25
+    mem_limit: 768m
+
+  umami-db:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: umami
+      POSTGRES_USER: umami
+      POSTGRES_PASSWORD: ${UMAMI_DB_PASSWORD}
+    volumes:
+      - umami-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U umami -d umami"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [internal]
+    cpus: 0.25
+    mem_limit: 512m
+
+networks:
+  app:
+    name: app-umami
+    external: true
+  # Reachable only from Umami: not from the edge, and no internet access.
+  internal:
+    internal: true
+
+volumes:
+  umami-db-data:

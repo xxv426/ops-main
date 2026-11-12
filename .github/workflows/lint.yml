@@ -1,0 +1,20 @@
+name: Lint
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      # In the starter itself there is no ops.conf yet, so lint the examples
+      # against the example config. Instance repositories lint their own apps.
+      - name: Lint
+        run: |
+          if [[ -f ops.conf ]]; then
+            platform/bin/ops lint
+          else
+            OPS_CONF=ops.conf.example OPS_APPS_DIR=examples platform/bin/ops lint
+          fi

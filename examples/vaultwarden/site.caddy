@@ -1,0 +1,15 @@
+vault.example.com {
+	encode zstd gzip
+	# Vaultwarden sets its own CSP, X-Frame-Options and Referrer-Policy, so the
+	# shared security_headers snippet is not used; only HSTS is added.
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		-Server
+	}
+	@admin path /admin /admin/*
+	respond @admin 404
+	# WebSocket live sync (/notifications/hub) uses the same port.
+	reverse_proxy vaultwarden:80 {
+		header_up X-Real-IP {remote_host}
+	}
+}

@@ -1,0 +1,5 @@
+__APP__.example.com {
+	import security_headers
+	encode zstd gzip
+	reverse_proxy app:8080
+}

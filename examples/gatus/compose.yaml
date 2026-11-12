@@ -1,0 +1,24 @@
+name: gatus
+
+services:
+  gatus:
+    image: ghcr.io/twin/gatus:v5.38.0
+    restart: unless-stopped
+    # Not required here so `ops lint` works without it; `ops up` insists on it.
+    env_file:
+      - path: /srv/apps/gatus/.env
+        required: false
+    environment:
+      GATUS_CONFIG_PATH: /config/config.yaml
+    # Never public. GATUS_LISTEN is 127.0.0.1 (dashboard through an SSH tunnel
+    # only) or this server's private IP, so other servers can push heartbeats.
+    ports:
+      - "${GATUS_LISTEN}:8080:8080"
+    volumes:
+      - ./config:/config:ro
+      - gatus-data:/data
+    cpus: 0.25
+    mem_limit: 128m
+
+volumes:
+  gatus-data:

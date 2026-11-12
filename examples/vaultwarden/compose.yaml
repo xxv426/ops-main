@@ -1,0 +1,24 @@
+name: vaultwarden
+
+services:
+  vaultwarden:
+    image: vaultwarden/server:1.37.5-alpine
+    restart: unless-stopped
+    # Not required here so `ops lint` works without it; `ops up` insists on it.
+    env_file:
+      - path: /srv/apps/vaultwarden/.env
+        required: false
+    volumes:
+      - /srv/apps/vaultwarden/data:/data
+    # The admin panel is blocked at Caddy. Reach it through
+    # `ssh -L 8081:127.0.0.1:8081 <server>` at http://127.0.0.1:8081/admin.
+    ports:
+      - "127.0.0.1:8081:80"
+    networks: [app]
+    cpus: 0.5
+    mem_limit: 256m
+
+networks:
+  app:
+    name: app-vaultwarden
+    external: true

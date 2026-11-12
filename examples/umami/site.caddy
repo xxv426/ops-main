@@ -1,0 +1,5 @@
+stats.example.com {
+	import security_headers
+	encode zstd gzip
+	reverse_proxy umami:3000
+}

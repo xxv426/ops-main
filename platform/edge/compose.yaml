@@ -1,0 +1,31 @@
+name: edge
+
+# The only container that listens on 80 and 443. ops adds a generated override
+# (/var/lib/ops/edge.networks.yaml) that joins it to every app network.
+services:
+  caddy:
+    image: caddy:2.11.7-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      # Directory mounts, not file mounts: a replaced file gets a new inode,
+      # and a file mount would keep showing the old one to `caddy reload`.
+      - ./caddy:/etc/caddy:ro
+      - ../../apps:/etc/ops-apps:ro
+      - ${OPS_WWW_ROOT:-/srv/www}:/srv/www:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    cpus: 0.25
+    mem_limit: 256m
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  caddy-data:
+  caddy-config:

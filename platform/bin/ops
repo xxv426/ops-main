@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+# ops: runs the apps, edge, backups and alerts of one server.
+# See docs/ in the starter repository.
+set -euo pipefail
+
+self=$(readlink -f "${BASH_SOURCE[0]}")
+OPS_ROOT=${OPS_ROOT:-$(cd "$(dirname "$self")/../.." && pwd)}
+export OPS_ROOT
+
+for lib in common edge apps backup alert init lint; do
+  # shellcheck source=/dev/null
+  source "$OPS_ROOT/platform/lib/$lib.sh"
+done
+
+usage() {
+  cat <<'EOF'
+usage: ops <command> [arguments]
+
+Setup
+  init [--generate-password] [--init-missing]   create and check /etc/ops
+  install-cron                                   schedule backups and checks from ops.conf
+  backup-client add <name> '<public key>'        on a backup server: add an SFTP client
+
+Apps
+  up <app>|edge          start or update an app (or the edge Caddy)
+  down <app>             stop an app
+  logs <app>|edge        show recent logs (extra arguments go to docker compose logs)
+  reload-caddy           validate, then reload the Caddy configuration
+  status [--usage]       apps, resource limits, last backups (and repository usage)
+  rollback <site> [rel]  list releases of a static site, or switch back to one
+  new <app>              create apps/<app> from the template (in your local checkout)
+
+Backups
+  backup <app>|--all     back up now
+  check                  prune and verify every backup target
+  restore <app> [--from target] [--snapshot id] [--host name] [--restore-env]
+  restore-test <app> [--from target] [--snapshot id] [--host name]
+
+Other
+  alert-test             send a test alert email
+  lint                   check the instance repository (no root needed)
+  upgrade                apply platform changes after syncing a new version
+  version                print the platform version
+EOF
+}
+
+cmd_upgrade() {
+  require_root
+  load_ops_conf
+  ln -sfn "$OPS_ROOT/platform/bin/ops" /usr/local/bin/ops
+  if any_site; then
+    edge_up
+  fi
+  [[ -f /etc/cron.d/ops ]] && cmd_install_cron
+  log "upgraded to platform $(cat "$OPS_ROOT/VERSION")"
+}
+
+command=${1:-help}
+shift || true
+case $command in
+  init) cmd_init "$@" ;;
+  install-cron) cmd_install_cron ;;
+  backup-client) cmd_backup_client "$@" ;;
+  up) cmd_up "$@" ;;
+  down) cmd_down "$@" ;;
+  logs) cmd_logs "$@" ;;
+  reload-caddy) require_root; load_ops_conf; cmd_reload_caddy ;;
+  status) cmd_status "$@" ;;
+  rollback) cmd_rollback "$@" ;;
+  new) cmd_new "$@" ;;
+  backup) cmd_backup "$@" ;;
+  check) cmd_check ;;
+  restore) cmd_restore "$@" ;;
+  restore-test) cmd_restore_test "$@" ;;
+  alert-test) cmd_alert_test ;;
+  lint) cmd_lint ;;
+  upgrade) cmd_upgrade ;;
+  version) cat "$OPS_ROOT/VERSION" ;;
+  help | -h | --help) usage ;;
+  *)
+    usage >&2
+    exit 1
+    ;;
+esac

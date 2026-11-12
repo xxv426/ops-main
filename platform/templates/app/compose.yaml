@@ -1,0 +1,21 @@
+name: __APP__
+
+services:
+  app:
+    image: ghcr.io/example/__APP__:1.0.0   # pin a version; the image must support this server's CPU
+    restart: unless-stopped
+    # Not required here so `ops lint` works without it; `ops up` insists on it.
+    env_file:
+      - path: /srv/apps/__APP__/.env
+        required: false
+    volumes:
+      - /srv/apps/__APP__/data:/data
+    networks: [app]
+    cpus: 0.25
+    mem_limit: 256m
+
+networks:
+  # Created by ops; only the edge Caddy and this app are on it.
+  app:
+    name: app-__APP__
+    external: true

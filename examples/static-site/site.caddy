@@ -1,0 +1,9 @@
+example.com {
+	import security_headers
+	# Serves /srv/www/static-site/current; files under /_astro/ are cached forever.
+	import static_site static-site /_astro/
+}
+
+www.example.com {
+	redir https://example.com{uri} permanent
+}

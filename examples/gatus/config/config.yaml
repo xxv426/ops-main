@@ -1,0 +1,51 @@
+web:
+  address: 0.0.0.0
+  port: 8080
+
+storage:
+  type: sqlite
+  path: /data/gatus.db
+
+alerting:
+  email:
+    from: "${ALERT_FROM}"
+    username: "${SMTP_USERNAME}"
+    password: "${SMTP_PASSWORD}"
+    host: "${SMTP_HOST}"
+    port: ${SMTP_PORT}
+    to: "${ALERT_TO}"
+
+endpoint-defaults: &defaults
+  interval: 5m
+  alerts:
+    - type: email
+      failure-threshold: 3
+      success-threshold: 2
+      send-on-resolved: true
+
+endpoints:
+  - <<: *defaults
+    name: example
+    group: sites
+    url: "https://example.com/"
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 336h"
+
+# One per app that backs up, named <host>-<app>. Servers push to
+# /api/v1/endpoints/backup_<host>-<app>/external?success=true|false
+# (HEARTBEAT_URL in their /etc/ops/alert.env). No push for 26 hours alerts.
+heartbeat-defaults: &heartbeat
+  group: backup
+  token: "${HEARTBEAT_TOKEN}"
+  heartbeat:
+    interval: 26h
+  alerts:
+    - type: email
+      failure-threshold: 1
+      success-threshold: 1
+      send-on-resolved: true
+
+external-endpoints:
+  - <<: *heartbeat
+    name: examplehost-exampleapp
