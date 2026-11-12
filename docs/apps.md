@@ -51,7 +51,8 @@ Suggested levels:
   `app-<app>` and publish no public port. Bind admin ports to `127.0.0.1`.
 - Put databases on an `internal: true` network.
 - Every service sets `cpus` and `mem_limit`; the total must fit `ops.conf`.
-- Pin every image to a version. It must exist for the server's `OPS_ARCH`.
+- Pin every image to a version. It must exist for the server's CPU
+  architecture; `ops up` checks.
 
 ## site.caddy
 

@@ -24,7 +24,11 @@ the shared history.
 Keeping them apart is what makes the rest simple:
 
 - `scripts/sync.sh` replaces `/opt/ops` wholesale with `rsync --delete`. No
-  exclude list is needed, so it can never delete data.
+  exclude list is needed, so it can never delete data. Before replacing
+  anything it checks, on the server, that `/opt/ops` is the same instance
+  (`OPS_HOST`) and that `ops lint` passes on the new files: the edge Caddy reads
+  `apps/*/site.caddy` straight from `/opt/ops`, so a broken route must not land
+  there. The synced commit is recorded in `/opt/ops/.revision`.
 - Backups, moves and rebuilds only have to think about `/srv/apps`.
 - CI writes `/srv/www` as an unprivileged user that cannot read any app's secrets.
 

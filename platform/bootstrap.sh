@@ -29,12 +29,7 @@ done
 require_root
 load_ops_conf
 
-case $(uname -m) in
-  x86_64) machine_arch=amd64 ;;
-  aarch64) machine_arch=arm64 ;;
-  *) die "unsupported CPU: $(uname -m)" ;;
-esac
-[[ $machine_arch == "$OPS_ARCH" ]] || die "ops.conf says OPS_ARCH=$OPS_ARCH, but this server is $machine_arch"
+[[ -n ${RESTIC_SHA256[$OPS_ARCH]:-} ]] || die "unsupported CPU: $OPS_ARCH"
 
 # shellcheck disable=SC1091
 source /etc/os-release
